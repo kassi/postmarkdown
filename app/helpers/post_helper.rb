@@ -34,7 +34,7 @@ module PostHelper
   class HTMLwithPygmentize < Redcarpet::Render::HTML
     def block_code(code, language)
       require "pygmentize"
-      Pygmentize.process(code, language)
+      Pygmentize.process(code, language || "sh")
     end
   end
 end
