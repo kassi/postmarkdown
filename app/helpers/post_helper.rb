@@ -18,6 +18,23 @@ module PostHelper
   end
 
   def post_content_html(post)
-    RDiscount.new(render(:inline => post.content)).to_html.html_safe
+    renderer = HTMLwithPygmentize.new(hard_wrap: true)
+    options = {
+      autolink: true,
+      no_intra_emphasis: true,
+      fenced_code_blocks: true,
+      lax_html_blocks: true,
+      strikethrough: true,
+      superscript: true
+    }
+    markdown = Redcarpet::Markdown.new(renderer, options)
+    markdown.render( post.content ).html_safe
+  end
+
+  class HTMLwithPygmentize < Redcarpet::Render::HTML
+    def block_code(code, language)
+      require "pygmentize"
+      Pygmentize.process(code, language)
+    end
   end
 end
