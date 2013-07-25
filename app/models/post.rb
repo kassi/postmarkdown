@@ -18,7 +18,7 @@ class Post
 
   def initialize(path)
     @path = path
-    @date_str, _, @slug = File.basename(path).match(FILENAME_FORMAT).captures
+    @date_str, @time_str, @slug = File.basename(path).match(FILENAME_FORMAT).captures
   end
 
   def to_param
@@ -72,10 +72,15 @@ class Post
     @date ||= Time.zone.parse(metadata[:date] || @date_str).to_date
   end
 
+  def time
+    @time ||= @time_str[1..2].to_s+":"+@time_str[3..4].to_s+":"+@time_str[5..6].to_s
+  end
+
   delegate :year, :month, :day, :to => :date
 
   def timestamp
-    date.to_time_in_current_zone
+    Time.zone = 'Berlin'
+    Time.zone.parse(@date_str[0..9]+" "+time).to_time
   end
   alias_method :last_modified, :timestamp
 
